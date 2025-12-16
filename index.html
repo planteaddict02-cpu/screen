@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enregistreur d'Écran avec Audio</title>
+    <title>Enregistreur d'Écran pour Montage Vidéo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -66,6 +66,19 @@
                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                 <line x1="10" y1="11" x2="10" y2="17"/>
                 <line x1="14" y1="11" x2="14" y2="17"/>
+            </svg>
+        );
+
+        const Film = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+                <line x1="7" y1="2" x2="7" y2="22"/>
+                <line x1="17" y1="2" x2="17" y2="22"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <line x1="2" y1="7" x2="7" y2="7"/>
+                <line x1="2" y1="17" x2="7" y2="17"/>
+                <line x1="17" y1="17" x2="22" y2="17"/>
+                <line x1="17" y1="7" x2="22" y2="7"/>
             </svg>
         );
 
@@ -190,7 +203,7 @@
                         if ('showSaveFilePicker' in window) {
                             const blob = new Blob(recordedChunks, { type: 'video/webm' });
                             const handle = await window.showSaveFilePicker({
-                                suggestedName: `enregistrement-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.webm`,
+                                suggestedName: `montage-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.webm`,
                                 types: [{
                                     description: 'Vidéo WebM',
                                     accept: { 'video/webm': ['.webm'] }
@@ -199,11 +212,11 @@
                             const writable = await handle.createWritable();
                             await writable.write(blob);
                             await writable.close();
-                            alert('✅ Vidéo enregistrée avec succès !');
+                            alert('✅ Vidéo enregistrée avec succès ! Prête pour le montage 🎬');
                         } else {
                             const a = document.createElement('a');
                             a.href = videoUrl;
-                            a.download = `enregistrement-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.webm`;
+                            a.download = `montage-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.webm`;
                             a.click();
                         }
                     } catch (err) {
@@ -233,14 +246,17 @@
                 <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-8">
                     <div className="max-w-4xl mx-auto">
                         <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/20">
-                            <h1 className="text-4xl font-bold text-white mb-8 text-center flex items-center justify-center gap-3">
-                                <Monitor className="w-10 h-10" />
-                                Enregistreur d'Écran
+                            <h1 className="text-4xl font-bold text-white mb-2 text-center flex items-center justify-center gap-3">
+                                <Film className="w-10 h-10" />
+                                Enregistreur d'Écran pour Montage
                             </h1>
+                            <p className="text-center text-white/70 mb-8 text-sm">
+                                🎬 Parfait pour TikTok, Reels, YouTube Shorts
+                            </p>
 
                             {!recording && !videoUrl && (
                                 <div className="mb-6 space-y-4">
-                                    <div className="flex items-center gap-3 bg-white/5 p-4 rounded-lg">
+                                    <div className="flex items-center gap-3 bg-white/5 p-4 rounded-lg hover:bg-white/10 transition-colors">
                                         <input
                                             type="checkbox"
                                             id="systemAudio"
@@ -248,13 +264,14 @@
                                             onChange={(e) => setSystemAudioEnabled(e.target.checked)}
                                             className="w-5 h-5 cursor-pointer"
                                         />
-                                        <label htmlFor="systemAudio" className="text-white text-lg cursor-pointer flex items-center gap-2">
+                                        <label htmlFor="systemAudio" className="text-white text-lg cursor-pointer flex items-center gap-2 flex-1">
                                             <Monitor className="w-5 h-5" />
-                                            Enregistrer le son du système
+                                            <span>Enregistrer le son du système</span>
+                                            <span className="text-xs text-white/60 ml-auto">Musique, audio des vidéos</span>
                                         </label>
                                     </div>
 
-                                    <div className="flex items-center gap-3 bg-white/5 p-4 rounded-lg">
+                                    <div className="flex items-center gap-3 bg-white/5 p-4 rounded-lg hover:bg-white/10 transition-colors">
                                         <input
                                             type="checkbox"
                                             id="microphone"
@@ -262,9 +279,10 @@
                                             onChange={(e) => setMicEnabled(e.target.checked)}
                                             className="w-5 h-5 cursor-pointer"
                                         />
-                                        <label htmlFor="microphone" className="text-white text-lg cursor-pointer flex items-center gap-2">
+                                        <label htmlFor="microphone" className="text-white text-lg cursor-pointer flex items-center gap-2 flex-1">
                                             <Mic className="w-5 h-5" />
-                                            Enregistrer le microphone
+                                            <span>Enregistrer le microphone</span>
+                                            <span className="text-xs text-white/60 ml-auto">Voix-off, commentaires</span>
                                         </label>
                                     </div>
                                 </div>
@@ -279,12 +297,12 @@
                                         </span>
                                     </div>
                                     {paused && (
-                                        <p className="text-yellow-300 mt-2 text-sm">En pause</p>
+                                        <p className="text-yellow-300 mt-2 text-sm">⏸️ En pause</p>
                                     )}
                                 </div>
                             )}
 
-                            <div className="flex gap-4 justify-center mb-8">
+                            <div className="flex gap-4 justify-center mb-8 flex-wrap">
                                 {!recording && !videoUrl && (
                                     <button
                                         onClick={startRecording}
@@ -322,7 +340,7 @@
                                             className="bg-green-500 hover:bg-green-600 text-white px-6 py-4 rounded-full font-semibold transition-all transform hover:scale-105 flex items-center gap-2 shadow-lg"
                                         >
                                             <Download className="w-5 h-5" />
-                                            Enregistrer dans mes fichiers
+                                            💾 Enregistrer la vidéo
                                         </button>
 
                                         <button
@@ -344,24 +362,76 @@
                                         controls
                                         className="w-full"
                                     />
-                                    <div className="p-4 text-white text-center">
-                                        <p className="text-sm opacity-75">
-                                            Durée: {formatTime(duration)}
+                                    <div className="p-4 text-white text-center bg-gradient-to-r from-purple-500/20 to-blue-500/20">
+                                        <p className="text-sm opacity-90 flex items-center justify-center gap-2">
+                                            <Film className="w-4 h-4" />
+                                            Durée: {formatTime(duration)} | Prêt pour le montage 🎬
                                         </p>
                                     </div>
                                 </div>
                             )}
 
                             {!recording && !videoUrl && (
-                                <div className="mt-8 bg-white/5 rounded-xl p-6 text-white/80 text-sm">
-                                    <h3 className="font-semibold mb-3 text-white">Instructions:</h3>
-                                    <ul className="space-y-2">
-                                        <li>• Choisissez vos options audio avant de commencer</li>
-                                        <li>• Cliquez sur "Démarrer" et sélectionnez l'écran à enregistrer</li>
-                                        <li>• Utilisez "Pause" pour suspendre temporairement l'enregistrement</li>
-                                        <li>• Cliquez sur "Arrêter" pour finaliser votre vidéo</li>
-                                        <li>• Enregistrez directement dans vos fichiers (vous choisissez l'emplacement)</li>
-                                    </ul>
+                                <div className="mt-8 space-y-4">
+                                    <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl p-6 text-white border border-purple-500/30">
+                                        <h3 className="font-bold mb-3 text-lg flex items-center gap-2">
+                                            <Film className="w-5 h-5" />
+                                            Instructions pour créer vos montages
+                                        </h3>
+                                        <ul className="space-y-2 text-sm text-white/90">
+                                            <li>• ✅ <strong>Son système</strong>: capturez la musique de vos vidéos (ex: "Quelque chose dans mon coeur")</li>
+                                            <li>• 🎤 <strong>Microphone</strong>: ajoutez votre voix-off ou commentaires</li>
+                                            <li>• 🖥️ <strong>Démarrer</strong>: sélectionnez la fenêtre ou l'écran complet</li>
+                                            <li>• ⏸️ <strong>Pause</strong>: coupez entre différentes séquences</li>
+                                            <li>• 💾 <strong>Format WebM</strong>: compatible avec tous les logiciels de montage</li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-xl p-6 text-white border border-blue-500/30">
+                                        <h3 className="font-bold mb-3 text-lg flex items-center gap-2">
+                                            💡 Workflow de montage recommandé
+                                        </h3>
+                                        <div className="space-y-3 text-sm">
+                                            <div className="flex items-start gap-3">
+                                                <span className="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold">1</span>
+                                                <p><strong>Enregistrez</strong> vos séquences avec cet outil</p>
+                                            </div>
+                                            <div className="flex items-start gap-3">
+                                                <span className="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold">2</span>
+                                                <p><strong>Importez</strong> dans CapCut, Premiere Pro, DaVinci Resolve, iMovie ou Final Cut</p>
+                                            </div>
+                                            <div className="flex items-start gap-3">
+                                                <span className="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold">3</span>
+                                                <p><strong>Montez</strong>: ajoutez effets, transitions, textes et filtres</p>
+                                            </div>
+                                            <div className="flex items-start gap-3">
+                                                <span className="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold">4</span>
+                                                <p><strong>Exportez</strong> pour TikTok, Reels, YouTube Shorts</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-gradient-to-r from-pink-500/20 to-red-500/20 rounded-xl p-6 text-white border border-pink-500/30">
+                                        <h3 className="font-bold mb-3 text-lg">🎯 Parfait pour</h3>
+                                        <div className="grid grid-cols-2 gap-3 text-sm">
+                                            <div className="bg-white/10 rounded-lg p-3">
+                                                <p className="font-semibold mb-1">🎵 Clips musicaux</p>
+                                                <p className="text-xs text-white/70">Nostalgie années 90</p>
+                                            </div>
+                                            <div className="bg-white/10 rounded-lg p-3">
+                                                <p className="font-semibold mb-1">🎬 Comédies</p>
+                                                <p className="text-xs text-white/70">La Smala, Trip HLM</p>
+                                            </div>
+                                            <div className="bg-white/10 rounded-lg p-3">
+                                                <p className="font-semibold mb-1">📱 Stories & Reels</p>
+                                                <p className="text-xs text-white/70">Format vertical</p>
+                                            </div>
+                                            <div className="bg-white/10 rounded-lg p-3">
+                                                <p className="font-semibold mb-1">🎮 Gaming</p>
+                                                <p className="text-xs text-white/70">Captures d'écran</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
                         </div>
